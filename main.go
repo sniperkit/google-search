@@ -1,20 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"log"
+	"net/http"
 )
 
 func main() {
-	fmt.Println("vim-go")
-	start := time.Now()
-	search = google.First(
-		google.Search("replica1"),
-		google.Search("replica2"),
-	)
-	result := search("golang")
-	elapsed := time.Since(start)
-	fmt.Println(result)
-	fmt.Println(elapsed)
+	http.HandleFunc("/search", handleSearch)
+	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+}
 
+func handleSearch(w http.ResponseWriter, r *http.Request) {
+	log.Println("serving", r.URL)
+
+	query := r.FormValue("q")
+	if query == "" {
+		http.Error(w, "Missing 'q' URL parameter", http.StatusBadRequest)
+		return
+	}
 }
